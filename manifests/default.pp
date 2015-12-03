@@ -109,9 +109,10 @@ node /^mesosslave[0-9]*$/ inherits mesosbase {
   service {"docker":
     ensure => running,
     enable => true
-  } ->
-  service {"mesos-slave":
-    require => [Package["mesos"], Service["zookeeper"]],
+  }
+
+  File <| tag == "mesos" |> ~> service {"mesos-slave":
+    require => [Package["mesos"], Service["zookeeper"], Service["docker"]],
     ensure => running,
     enable => true
   }

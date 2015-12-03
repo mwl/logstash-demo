@@ -62,4 +62,22 @@ Vagrant.configure(2) do |config|
     end
   end
 
+  config.vm.define "mesosslave4" do |mesosslave|
+    mesosslave.vm.network "private_network", ip: "192.168.33.34"
+    mesosslave.vm.hostname = "mesosslave4"
+
+    mesosslave.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+    end
+  end
+
+  config.vm.define "mesosslave5" do |mesosslave|
+    mesosslave.vm.network "private_network", ip: "192.168.33.35"
+    mesosslave.vm.hostname = "mesosslave5"
+
+    mesosslave.vm.provider "virtualbox" do |vb|
+      vb.memory = "512"
+    end
+  end
+
 end
