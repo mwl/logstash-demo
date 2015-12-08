@@ -1,7 +1,6 @@
 Exec {
   path => "/usr/bin:/usr/sbin:/bin"
 }
-
 exec { "apt-get-update" :
   command => "/usr/bin/apt-get update"
 } -> Package <| |>
@@ -21,7 +20,7 @@ service {"puppet":
   enable => false
 }
 
-node "mesosbase" {
+class mesos {
   file {"/etc/apt/sources.list.d/openjdk.list":
     content => "deb http://ppa.launchpad.net/openjdk-r/ppa/ubuntu trusty main"
   } ->
@@ -44,10 +43,11 @@ node "mesosbase" {
   }
 
   file {
-    "/etc/mesos/zk":
+    default:
       require => Package["mesos"],
-      content => "zk://192.168.33.10:2181/mesos",
       tag => ["mesos"];
+    "/etc/mesos/zk":
+      content => "zk://192.168.33.10:2181/mesos";
   }
 
   service {"zookeeper":
@@ -57,16 +57,17 @@ node "mesosbase" {
   }
 }
 
-node /^mesosmaster[0-9]*$/ inherits mesosbase {
+node /^mesosmaster[0-9]*$/ {
+  include mesos
+
   file {
+    default:
+      require => Package["mesos"],
+      tag => ["mesos"];
     "/etc/mesos-master/advertise_ip":
-      content => "${ipaddress_eth1}",
-      require => Package["mesos"],
-      tag => ["mesos"];
+      content => "${ipaddress_eth1}";
     "/etc/mesos-master/advertise_port":
-      content => "5050",
-      require => Package["mesos"],
-      tag => ["mesos"];
+      content => "5050";
   }
 
   File <| tag == "mesos" |> ~> service {"mesos-master":
@@ -76,24 +77,21 @@ node /^mesosmaster[0-9]*$/ inherits mesosbase {
   }
 }
 
-node /^mesosslave[0-9]*$/ inherits mesosbase {
+node /^mesosslave[0-9]*$/ {
+  include mesos
+
   file {
+    default:
+      require => Package["mesos"],
+      tag => ["mesos"];
     "/etc/mesos-slave/containerizers":
-      content => "mesos,docker",
-      require => Package["mesos"],
-      tag => ["mesos"];
+      content => "mesos,docker";
     "/etc/mesos-slave/ip":
-      content => "${ipaddress_eth1}",
-      require => Package["mesos"],
-      tag => ["mesos"];
+      content => "${ipaddress_eth1}";
     "/etc/mesos-slave/hostname":
-      content => "${ipaddress_eth1}",
-      require => Package["mesos"],
-      tag => ["mesos"];
+      content => "${ipaddress_eth1}";
     "/etc/mesos-slave/resources":
-      content => "ports(*):[514-514,5000-5000,31000-32000]; cpus(*):0.8; mem(*):795; disk(*):200",
-      require => Package["mesos"],
-      tag => ["mesos"];
+      content => "ports(*):[514-514,5000-5000,31000-32000]; cpus(*):0.8; mem(*):795; disk(*):200";
   }
 
   file {"/etc/apt/sources.list.d/docker.list":
