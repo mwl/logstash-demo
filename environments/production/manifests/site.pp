@@ -35,11 +35,11 @@ class mesos {
     unless => "apt-key list | grep E56151BF"
   } -> Exec["apt-get-update"]
 
-  package {[
-    "openjdk-8-jre-headless",
-    "mesos"
-  ]:
+  package {"openjdk-8-jre-headless":
     ensure => installed
+  } ->
+  package {"mesos":
+    ensure => "0.25.0-0.2.70.ubuntu1404"
   }
 
   file {
@@ -47,7 +47,7 @@ class mesos {
       require => Package["mesos"],
       tag => ["mesos"];
     "/etc/mesos/zk":
-      content => "zk://192.168.33.10:2181/mesos";
+      content => "zk://172.16.33.10:2181/mesos";
   }
 
   service {"zookeeper":
@@ -66,6 +66,8 @@ node /^mesosmaster[0-9]*$/ {
       tag => ["mesos"];
     "/etc/mesos-master/advertise_ip":
       content => "${ipaddress_eth1}";
+    "/etc/mesos-master/roles":
+      content => "logstash";
     "/etc/mesos-master/advertise_port":
       content => "5050";
   }
@@ -91,7 +93,7 @@ node /^mesosslave[0-9]*$/ {
     "/etc/mesos-slave/hostname":
       content => "${ipaddress_eth1}";
     "/etc/mesos-slave/resources":
-      content => "ports(*):[514-514,5000-5000,31000-32000]; cpus(*):0.8; mem(*):795; disk(*):200";
+      content => "ports(logstash):[514-514,5000-5000]; ports(*):[31000-32000]; cpus(*):0.8; mem(*):795; disk(*):200";
   }
 
   file {"/etc/apt/sources.list.d/docker.list":
