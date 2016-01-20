@@ -93,7 +93,7 @@ node /^mesosslave[0-9]*$/ {
     "/etc/mesos-slave/hostname":
       content => "${ipaddress_eth1}";
     "/etc/mesos-slave/resources":
-      content => "ports(logstash):[514-514,5000-5000]; ports(*):[31000-32000]; cpus(*):0.8; mem(*):795; disk(*):200";
+      content => "ports(logstash):[514-514,25826-25826]; ports(*):[31000-32000]; cpus(*):0.8; mem(*):795; disk(*):200";
   }
 
   file {"/etc/apt/sources.list.d/docker.list":
@@ -137,7 +137,7 @@ LoadPlugin network
     IgnoreSelected false
 </Plugin>
 <Plugin network>
-    <Server "127.0.0.1" "5000">
+    <Server "127.0.0.1">
     </Server>
 </Plugin>
 
