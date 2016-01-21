@@ -47,51 +47,17 @@ Vagrant.configure(2) do |config|
     end
   end
 
-  config.vm.define "mesosslave1" do |mesosslave|
-    mesosslave.vm.network "private_network", ip: "172.16.33.31"
-    mesosslave.vm.hostname = "mesosslave1"
+  for i in 1..4
+    config.vm.define ("mesosslave" + i.to_s) do |mesosslave|
+      mesosslave.vm.network "private_network", ip: "172.16.33." + (30+i).to_s
+      mesosslave.vm.hostname = "mesosslave" + i.to_s
 
-    mesosslave.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
-    end
-    config.vm.provider "vmware_fusion" do |vf|
-      vf.vmx["memsize"] = "1024"
-    end
-  end
-
-  config.vm.define "mesosslave2" do |mesosslave|
-    mesosslave.vm.network "private_network", ip: "172.16.33.32"
-    mesosslave.vm.hostname = "mesosslave2"
-
-    mesosslave.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
-    end
-    config.vm.provider "vmware_fusion" do |vf|
-      vf.vmx["memsize"] = "1024"
-    end
-  end
-
-  config.vm.define "mesosslave3" do |mesosslave|
-    mesosslave.vm.network "private_network", ip: "172.16.33.33"
-    mesosslave.vm.hostname = "mesosslave3"
-
-    mesosslave.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
-    end
-    config.vm.provider "vmware_fusion" do |vf|
-      vf.vmx["memsize"] = "1024"
-    end
-  end
-
-  config.vm.define "mesosslave4" do |mesosslave|
-    mesosslave.vm.network "private_network", ip: "172.16.33.34"
-    mesosslave.vm.hostname = "mesosslave4"
-
-    mesosslave.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"
-    end
-    config.vm.provider "vmware_fusion" do |vf|
-      vf.vmx["memsize"] = "1024"
+      mesosslave.vm.provider "virtualbox" do |vb|
+        vb.memory = "1024"
+      end
+      config.vm.provider "vmware_fusion" do |vf|
+        vf.vmx["memsize"] = "1024"
+      end
     end
   end
 end
