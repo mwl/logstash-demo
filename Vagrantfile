@@ -47,7 +47,7 @@ Vagrant.configure(2) do |config|
     end
   end
 
-  for i in 1..4
+  def define_slave(config, i)
     config.vm.define ("mesosslave" + i.to_s) do |mesosslave|
       mesosslave.vm.network "private_network", ip: "172.16.33." + (30+i).to_s
       mesosslave.vm.hostname = "mesosslave" + i.to_s
@@ -59,5 +59,9 @@ Vagrant.configure(2) do |config|
         vf.vmx["memsize"] = "1024"
       end
     end
+  end
+  
+  for i in 1..4
+    define_slave(config, i)
   end
 end
