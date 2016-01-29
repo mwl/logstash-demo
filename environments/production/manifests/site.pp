@@ -77,6 +77,12 @@ node /^mesosmaster[0-9]*$/ {
     ensure => running,
     enable => true
   }
+
+  service {"mesos-slave":
+    require => Package["mesos"],
+    ensure => stopped,
+    enable => false
+  }
 }
 
 node /^mesosslave[0-9]*$/ {
